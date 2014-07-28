@@ -1,0 +1,10 @@
+<h3>Select Benefits</h3>
+<%= form_for @user, class: "form-horizontal" do |form| %>
+  <% @user.employee_companies.first.benefit_types.each do |type| %>
+    <div class="form-group">
+      <% type_name = type.name %>
+      <label for="<%= type_name %>"><%= type_name %></label>
+    </div>
+  <% end %>
+  <button type="submit" class="btn btn-primary">Select Benefits</button>
+<% end %>

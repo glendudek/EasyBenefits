@@ -33,11 +33,20 @@ class UsersController < ApplicationController
   def edit
     @user = User.find_by_id(params[:id])
     if @user.nil?
-      flash = {:alert=>"User not found"}
+      flash = {alert: "User not found"}
     end
   end
 
   def update
     redirect_to '/'
+  end
+
+  def benefits
+    @user = current_user
+    if request.get?
+    elsif request.post?
+    else
+      flash = {alert: 'Invalid benefits request type'}
+    end
   end
 end

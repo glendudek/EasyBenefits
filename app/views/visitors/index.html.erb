@@ -6,4 +6,12 @@
     <% end %>
   <% end %>
 </p>
+
+<p>
+  <% unless current_user.employee_companies.blank? %>
+    <%= link_to benefits_user_path(current_user) do %>
+      <button type="button" class="btn btn-lg btn-primary">select benefits</button>
+    <% end %>
+  <% end %>
+</p>
                                  

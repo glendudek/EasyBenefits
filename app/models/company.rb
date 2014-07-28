@@ -5,4 +5,5 @@ class Company < ActiveRecord::Base
   has_many :admin_users, through: :company_users_admin, source: :user
   has_many :employee_users, through: :company_users_employee, source: :user
   has_many :company_benefit_plan_options
+  has_many :benefit_types, -> { uniq }, through: :company_benefit_plan_options
 end
