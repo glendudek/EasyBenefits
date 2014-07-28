@@ -1,1 +1,9 @@
 <h3>Welcome</h3>
+<p>
+  <% unless current_user.admin_companies.blank? %>
+    <%= link_to new_user_path do %>
+      <button type="button" class="btn btn-lg btn-primary">add new user</button>
+    <% end %>
+  <% end %>
+</p>
+                                 
