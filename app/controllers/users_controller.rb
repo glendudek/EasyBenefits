@@ -41,10 +41,23 @@ class UsersController < ApplicationController
     redirect_to '/'
   end
 
+  include UsersHelper
+
   def benefits
     @user = current_user
     if request.get?
     elsif request.post?
+      company = @user.employee_companies.first
+      company.benefit_types.each do |type|
+        type_param = user_benefit_type_select_param(type.name)
+        current_user_option = @user.user_company_benefit_plan_options.filter_by_type(type).first
+        selected_company_option = CompanyBenefitPlanOption.find_by_id(params[type_param])
+        if current_user_option.nil? or selected_company_option.nil? or current_user_option.company_benefit_plan_option.id != selected_company_option.id
+          current_user_option.destroy unless current_user_option.nil?
+          @user.user_company_benefit_plan_options.create!(company_benefit_plan_option: selected_company_option) unless selected_company_option.nil?
+        end
+      end
+      redirect_to '/', flash: {success: 'Benefit selections saved'}
     else
       flash = {alert: 'Invalid benefits request type'}
     end

@@ -1,9 +1,11 @@
 <h3>Select Benefits</h3>
-<%= form_for @user, class: "form-horizontal" do |form| %>
-  <% @user.employee_companies.first.benefit_types.each do |type| %>
+<%= form_for @user, url: benefits_user_path, method: :post, class: "form-horizontal" do |form| %>
+  <% company = @user.employee_companies.first %>
+  <% company.benefit_types.each do |type| %>
     <div class="form-group">
       <% type_name = type.name %>
-      <label for="<%= type_name %>"><%= type_name %></label>
+      <label for="<%= user_benefit_type_select_param(type_name) %>"><%= type_name %></label>
+      <%= select_tag user_benefit_type_select_param(type_name), user_benefit_select_options(company, type, @user), class: 'form-control', prompt: 'Select benefit option...' %>
     </div>
   <% end %>
   <button type="submit" class="btn btn-primary">Select Benefits</button>
