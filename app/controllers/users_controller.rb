@@ -1,44 +1,54 @@
 class UsersController < ApplicationController
+  EMPLOYEE_METHODS = [:benefits]
+  before_action :authorize_company_as_admin, :except=>EMPLOYEE_METHODS
+  before_action :authorize_company_as_employee, :only=>EMPLOYEE_METHODS
+  before_action :remember_calling_url, :only=>[:new, :edit]
+  before_action :find_user, :only=>[:edit, :update]
+
+  def find_company
+    @company = Company.find_by_id(params[:company])
+    raise MyException::NotFound, "company #{params[:company]} not found" if @company.nil?
+  end
+
+  def find_user
+    @user = User.find_by_id(params[:id])
+    raise MyException::NotFound, "user #{params[:id]} not found" if @user.nil?
+  end
+
+  def authorize_company_as_admin
+    find_company
+    raise MyException::Unauthorized, "you are not authorized as an admin for company #{params[:company]}" unless current_user.admin_companies.include?(@company)
+  end
+
+  def authorize_company_as_employee
+    find_company
+    raise MyException::Unauthorized, "you are not authorized as an employee for company #{params[:company]}" unless current_user.admin_companies.include?(@company)
+  end
+
   def new
     @user = User.new
   end
 
   def create
-    company_id = params[:company_id]
-    company = Company.find_by_id(company_id)
-    if company.nil?
-      flash = {:alert=>"Invalid company"}
-      render 'new'
-      return
-    end
-    unless current_user.admin_companies.include?(company)
-      flash = {:alert=>"You are not an admin for the selected company"}
-      render 'new'
-      return
-    end
     email = params[:user][:email]
     @user = User.find_by_email(email)
     if @user.nil?
       @user = User.create!(params[:user].permit(:full_name, :email))
     end
-    if @user.employee_companies.include?(company)
-      flash = {notice: "#{@user.email} is already an employee of #{company.full_name}"}
+    if @user.employee_companies.include?(@company)
+      flash = {notice: "#{@user.email} is already an employee of #{@company.full_name}"}
     else
-      company.company_users.create!(user: @user, company_user_type: CompanyUserType::Employee)
-      flash = {success: "#{@user.email} added as an employee to #{company.full_name}"}
+      @company.company_users.create!(user: @user, company_user_type: CompanyUserType::Employee)
+      flash = {success: "#{@user.email} added as an employee to #{@company.full_name}"}
     end
-    redirect_to '/', flash: flash
+    redirect_to calling_url, flash: flash
   end
 
   def edit
-    @user = User.find_by_id(params[:id])
-    if @user.nil?
-      flash = {alert: "User not found"}
-    end
   end
 
   def update
-    redirect_to '/'
+    redirect_to calling_url
   end
 
   include UsersHelper
@@ -46,9 +56,9 @@ class UsersController < ApplicationController
   def benefits
     @user = current_user
     if request.get?
+      remember_calling_url
     elsif request.post?
-      company = @user.employee_companies.first
-      company.benefit_types.each do |type|
+      @company.benefit_types.each do |type|
         type_param = user_benefit_type_select_param(type.name)
         current_user_option = @user.user_company_benefit_plan_options.filter_by_type(type).first
         selected_company_option = CompanyBenefitPlanOption.find_by_id(params[type_param])
@@ -57,7 +67,7 @@ class UsersController < ApplicationController
           @user.user_company_benefit_plan_options.create!(company_benefit_plan_option: selected_company_option) unless selected_company_option.nil?
         end
       end
-      redirect_to '/', flash: {success: 'Benefit selections saved'}
+      redirect_to calling_url, flash: {success: 'Benefit selections saved'}
     else
       flash = {alert: 'Invalid benefits request type'}
     end

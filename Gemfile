@@ -14,6 +14,7 @@ gem 'bootstrap-sass'
 gem 'high_voltage'
 gem 'devise', '~> 3.2.4'
 gem 'classy_enum', '~> 3.5.0'
+gem 'exception_notification'
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller', :platforms=>[:mri_21]

@@ -6,4 +6,12 @@ class Company < ActiveRecord::Base
   has_many :employee_users, through: :company_users_employee, source: :user
   has_many :company_benefit_plan_options
   has_many :benefit_types, -> { uniq }, through: :company_benefit_plan_options
+
+  def self.sort_by_full_name
+    order(:full_name)
+  end
+
+  def self.sort_by_name
+    order(:name)
+  end
 end

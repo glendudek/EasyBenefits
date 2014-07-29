@@ -1,17 +1,20 @@
 <h3>Welcome</h3>
 <p>
-  <% unless current_user.admin_companies.blank? %>
-    <%= link_to new_user_path do %>
+  <% current_user.admin_companies.sort_by_full_name.each_with_index do |company, index| %>
+    <% id = "admin_#{index}" %>
+    <%= link_to(new_user_path(company: company.id), id: id) do %>
       <button type="button" class="btn btn-lg btn-primary">add new user</button>
     <% end %>
+    <label for="<%= id %>"><%= company.full_name %></label>
   <% end %>
 </p>
 
 <p>
-  <% unless current_user.employee_companies.blank? %>
-    <%= link_to benefits_user_path(current_user) do %>
+  <% current_user.employee_companies.sort_by_full_name.each_with_index do |company, index| %>
+    <% id = "employee_#{index}" %>
+    <%= link_to(benefits_user_path(current_user, company: company.id), id: id) do %>
       <button type="button" class="btn btn-lg btn-primary">select benefits</button>
     <% end %>
+    <label for="<%= id %>"><%= company.full_name %></label>
   <% end %>
 </p>
-                                 
