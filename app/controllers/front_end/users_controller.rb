@@ -1,9 +1,9 @@
-class UsersController < ApplicationController
+class FrontEnd::UsersController < FrontEndController
   EMPLOYEE_METHODS = [:benefits]
   before_action :authorize_company_as_admin, :except=>EMPLOYEE_METHODS
   before_action :authorize_company_as_employee, :only=>EMPLOYEE_METHODS
   before_action :remember_calling_url, :only=>[:new, :edit]
-  before_action :find_user, :only=>[:edit, :update]
+  before_action :find_user, :except=>[:new, :create]
 
   def find_company
     @company = Company.find_by_id(params[:company])
@@ -54,10 +54,12 @@ class UsersController < ApplicationController
   include UsersHelper
 
   def benefits
-    @user = current_user
+    raise MyException::Unauthorized, "you are not authorized to access the benefits for user #{@user.id}" if @user != current_user
     if request.get?
       remember_calling_url
-    elsif request.post?
+    end
+    redirect_on_exception(calling_url)
+    if request.post?
       @company.benefit_types.each do |type|
         type_param = user_benefit_type_select_param(type.name)
         current_user_option = @user.user_company_benefit_plan_options.filter_by_type(type).first

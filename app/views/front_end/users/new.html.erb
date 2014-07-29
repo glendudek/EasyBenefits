@@ -1,5 +1,5 @@
 <h3>Add a New User for <%= @company.full_name %></h3>
-<%= form_for @user, class: "form-horizontal" do |form| %>
+<%= form_for @user, url: front_end_users_path, class: "form-horizontal" do |form| %>
   <%= hidden_field_tag :company, @company.id %>
   <%= render 'user_fields', form: form %>
   <button type="submit" class="btn btn-primary">Add New User</button>

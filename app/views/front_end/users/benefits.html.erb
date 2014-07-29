@@ -1,5 +1,5 @@
 <h3>Select Benefits for <%= @company.full_name %></h3>
-<%= form_for @user, url: benefits_user_path, method: :post, class: "form-horizontal" do |form| %>
+<%= form_for @user, url: benefits_front_end_user_path, method: :post, class: "form-horizontal" do |form| %>
   <%= hidden_field_tag :company, @company.id %>
   <% @company.benefit_types.each do |type| %>
     <div class="form-group">
