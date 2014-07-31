@@ -38,5 +38,6 @@ module Easybenefits
     # config.i18n.default_locale = :de
 
     config.autoload_paths << "#{config.root}/app/lib"
+    config.autoload_paths << "#{config.root}/app/serializers"
   end
 end

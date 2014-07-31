@@ -14,7 +14,11 @@ class CompanyBenefitPlanOption < ActiveRecord::Base
     joins(:benefit_type).where(BenefitType.table_name => {:name => type_name})
   end
 
+  def plan_name
+    "#{self.benefit_provider.name} #{self.benefit_plan.name}: #{self.benefit_plan_option.name}"
+  end
+
   def selection_name
-    "#{self.benefit_provider.name} #{self.benefit_plan.name}: #{self.benefit_plan_option.name} ($#{self.employee_cost_per_period.to_i} per pay period)"
+    "#{self.plan_name} ($#{self.employee_cost_per_period.to_i} per pay period)"
   end
 end

@@ -15,6 +15,7 @@ gem 'high_voltage'
 gem 'devise', '~> 3.2.4'
 gem 'classy_enum', '~> 3.5.0'
 gem 'exception_notification'
+gem 'active_model_serializers', '~> 0.8.0'
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller', :platforms=>[:mri_21]

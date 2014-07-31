@@ -13,7 +13,21 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :users
+      resources :users do
+        collection do
+          match 'current', via: :get
+        end
+        member do
+          match 'benefits', via: [:get, :post]
+          match 'companies', via: [:get, :post]
+        end
+      end
+      resources :companies do
+        member do
+          match 'benefits', via: [:get, :post]
+          match 'users', via: [:get, :post]
+        end
+      end
     end
   end
 end

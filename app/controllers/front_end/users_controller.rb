@@ -1,19 +1,11 @@
 class FrontEnd::UsersController < FrontEndController
+  include UsersControllerShared
+
   EMPLOYEE_METHODS = [:benefits]
-  before_action :authorize_company_as_admin, :except=>EMPLOYEE_METHODS
-  before_action :authorize_company_as_employee, :only=>EMPLOYEE_METHODS
-  before_action :remember_calling_url, :only=>[:new, :edit]
-  before_action :find_user, :except=>[:new, :create]
-
-  def find_company
-    @company = Company.find_by_id(params[:company])
-    raise MyException::NotFound, "company #{params[:company]} not found" if @company.nil?
-  end
-
-  def find_user
-    @user = User.find_by_id(params[:id])
-    raise MyException::NotFound, "user #{params[:id]} not found" if @user.nil?
-  end
+  before_action :authorize_company_as_admin, except: EMPLOYEE_METHODS
+  before_action :authorize_company_as_employee, only: EMPLOYEE_METHODS
+  before_action :remember_calling_url, only: [:new, :edit]
+  before_action :find_user, except: [:new, :create]
 
   def authorize_company_as_admin
     find_company

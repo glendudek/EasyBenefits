@@ -1,0 +1,20 @@
+version: v1.0
+response_format: JSON
+auhtentication: None
+method: GET
+resource_url: http://localhost:3000/api/v1/users/current
+description: >
+
+parameters:
+  - name: Name1
+    description: >
+
+    optional:
+  - name: Name2
+    description: >
+
+    default:
+
+sample_url:
+sample_request: None
+sample_response: |
